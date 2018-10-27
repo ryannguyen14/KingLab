@@ -1,0 +1,23 @@
+### This are my primers from 9/18/2018. These are for megaprimers for making ckb1 knockout
+>RN_FarUpPrimer - ckb1 (Anneal at 57)
+GTGCTACTATAGTGCATCCCAGTGC
+>RN_F2UpRevPrimer- ckb1 (Anneal at 57)
+GCTTCGTTTAATTAACCCGGGGATCCG
+>RN_R1DownForPrimer - ckb1 (Anneal at 57)
+GTTTAAACGAGCTCGAATTCAGGCATTTTGC
+>RN_FarDownRevPrimer - ckb1 (Anneal at 57)
+TCTTAGATAAAAGGAGCTGATGCTTCGGG
+>RN_CheckingPrimer - ckb1 (Tm = 62)
+GTAGGCTTTGTAGCAGATGGAACGCTAAATATTTC
+
+### These are my primers from 9/26/2018. Megaprimers from 9/18 did not work, so gonna try to make some new ones
+>RN_FarUpPrimer_ckb1_2 (Anneal at 69)
+GCATCCCAGTGCATAAACGTTTAAGTG
+>RN_F2UpRevPrimer_ckb1_2 
+TTAATTAACCCGGGGATCCGGCTTCGTTCCGATTTACGTTGAAAAG
+>RN_R1DownForPrimer_ckb1_2 (Anneal at 63)
+GTTTAAACGAGCTCGAATTCAGGCATTTTGCTTAATCTTCATTAACA
+>RN_FarDownRevPrimer_2
+AAGCAATTATCAAAGTAAAAAAAGAGGTTC
+>RN_CheckingPrimer_ckb1 (Tm = 61)
+CATTTTTGTTGCTAAAGCAGTTTTAAT
