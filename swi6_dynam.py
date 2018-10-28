@@ -32,8 +32,10 @@ class Particle(sphere):
 
 class Fuse(compound):
 
+
 	def giveRadius(self,particle):
 		self.radius = particle.radius
+		self.hasOligomerized = False
 
 	def giveNum(self,num):
 		self.num = num
@@ -134,11 +136,13 @@ class Fuse(compound):
 		for j in range(0, len(distance_array_r)):
 			if distance_array_r[j] <= sigma and particle_num_array[j] != self.num: 
 				oligomer_pair_list.append((self.num,particle_num_array[j]))
+				self.hasOligomerized = True
+				break
 		
 		print(particle_array)
 		
 		for pair in oligomer_pair_list:
-			print(pair)
+			#print(pair)
 			temp_oligomer = Oligomer([particle_array[pair[0]],particle_array[pair[1]]])
 			
 			particle_array[pair[0]].visible = False
@@ -148,8 +152,9 @@ class Fuse(compound):
 			temp_oligomer.giveRadius(particle_array[pair[0]], particle_array[pair[1]])
 			temp_oligomer.giveNum(particle_array[pair[0]], particle_array[pair[1]])
 
-
 			particle_array.append(temp_oligomer)
+
+			
 		for pair in oligomer_pair_list:
 			del particle_array[pair[0]]
 			del particle_array[pair[1] - 1]
@@ -207,7 +212,9 @@ for __ in range(0,2000):
 	for particle in particle_array:
 		print(particle_array)
 		particle.update(particle_array)
-
+		# if particle.hasOligomerized: 
+		# 	particle.hasOligomerized = False
+		# 	break 
 	print("New Move!")
 print("Done")
 #input("next ...")
