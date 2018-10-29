@@ -5,7 +5,7 @@ import math
 import random
 
 # Diffusivity Constant
-D_trans = 0.09#0.0000005
+D_trans = 0.9#0.0000005
 D_rot = 3
 kT = 2.5
 
@@ -188,16 +188,18 @@ def oligoCheck(particle_array):
 		if particle.hasOligomerized:
 			particle.visible = False
 			del particle
-
+	particle_array = None
 	return keep_list
 
 
 """Main Simulation - The Conductor! """
-particle_array = []
-for i in range(0,20):
-	#temp_particle = Particle(pos = vector(i,0,0), radius = 0.8, color = color.white)
 
-	temp_particle = Particle(pos = vector(random.uniform(-10,10),random.uniform(-10,10),random.uniform(-10,10)), radius = 0.8, color = color.white)
+### Try smaller time steps 
+particle_array = []
+for i in range(0,10):
+	temp_particle = Particle(pos = vector(i,0,0), radius = 0.8, color = color.white)
+
+	#temp_particle = Particle(pos = vector(random.uniform(-10,10),random.uniform(-10,10),random.uniform(-10,10)), radius = 0.8, color = color.white)
 	temp_particle.getContactPoints(theta = 0, phi = 30, theta_offset = 20)
 	contactPoint1 = Particle(pos = vector(temp_particle.x1,temp_particle.y1,temp_particle.z1), radius = 0.2, color = color.green)
 	contactPoint2 = Particle(pos = vector(temp_particle.x2,temp_particle.y2,temp_particle.z2), radius = 0.2, color = color.blue)
