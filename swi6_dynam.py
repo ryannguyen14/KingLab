@@ -36,62 +36,38 @@ class Fuse(compound):
 	def giveProperties(self, particle, num, mass):
 		self.radius = particle.radius
 		self.hasOligomerized = False
+		self.OligoPartner = 0
 		self.num = num
 		self.mass = mass
+
 	
-	def calculateEnergy(self, particle_array):
-		sigma = 64* self.radius #optimal distance
-		epsilon = -50 # well depth
+	# def calculateEnergy(self, particle_array):
+	# 	sigma = 64* self.radius #optimal distance
+	# 	epsilon = -50 # well depth
 
-		distance_array = []
+	# 	distance_array = []
 
 
-		for particle_index in range(0,length(particle_array)):
-			if particle_index != self.num:
-				distances_array.append(calculateDistance(self, particle))
+	# 	for particle_index in range(0,length(particle_array)):
+	# 		if particle_index != self.num:
+	# 			distances_array.append(calculateDistance(self, particle))
 		
-		""" Potential Energy of Translation"""
-		force_sum = 0
-		for distance in distances_array: 
-			force_sum += 4*epsilon*((sigma/distance)**12 - (sigma/distance)**6)
+	# 	""" Potential Energy of Translation"""
+	# 	force_sum = 0
+	# 	for distance in distances_array: 
+	# 		force_sum += 4*epsilon*((sigma/distance)**12 - (sigma/distance)**6)
 
-		return force_sum 
+	# 	return force_sum 
 
-
-	"""" Check for Contacts before Doing Anything Else""" 
-	def oligoCheck(self,particle_array):
-	""" Find out if dimerization should occur """
-		
-	""" Get Distances """
-	for particle_index in range(0,len(particle_array)):
-		if particle_index != self.num:
-			distance_x, distance_y, distance_z, distance_r = self.calculateDistance(particle_array[particle_index])
-			distance_array_x.append(distance_x)
-			distance_array_y.append(distance_y)
-			distance_array_z.append(distance_z)
-			distance_array_r.append(distance_r)
-			particle_num_array.append(particle_array[particle_index].num)
-
-	oligomer_pair_list = []
-
-	# This gets all of the particls that are close enough to oligomerize. Double counting does happen!!! 
-	for j in range(0, len(distance_array_r)):
-		if distance_array_r[j] <= sigma and particle_num_array[j] != self.num: 
-			oligomer_pair_list = oligomer_pair_list.append((self.num,particle_num_array[j]))
-
-
-
-	doubleCount = False 
-	for pair_idx in 0,oligomer_pair_list:
-		oligomer_pair_list.pop((oligomer_pair_list[pair_idx][1], oligomer_pair_list[pair_idx][0]))
+		#oligomer_pair_list.pop((oligomer_pair_list[pair_idx][1], oligomer_pair_list[pair_idx][0]))
 		# To account for double counting, only count pair (a,b), not (b,a)
-		if (oligomer_pair_list[pair_idx][1], oligomer_pair_list[pair_idx][0]) in oligomer_pair_list:
-			doubleCount = True
+		# if (oligomer_pair_list[pair_idx][1], oligomer_pair_list[pair_idx][0]) in oligomer_pair_list:
+		# 	doubleCount = True
 
-		if not doubleCount: 
-			temp_oligomer = Oligomer([particle_array[pair[0]],particle_array[pair[1]]])
-			oligomer_pair_list[pair_idx][0].visible = False
-			oligomer_pair_list[pair_idx][1].visible = False
+		# if not doubleCount: 
+		# 	temp_oligomer = Oligomer([particle_array[pair[0]],particle_array[pair[1]]])
+		# 	oligomer_pair_list[pair_idx][0].visible = False
+			# oligomer_pair_list[pair_idx][1].visible = False
 
 
 		# temp_oligomer.giveMass(particle_array[pair[0]], particle_array[pair[1]])
@@ -134,7 +110,7 @@ class Fuse(compound):
 		
 		""" Get Distances """
 		for particle_index in range(0,len(particle_array)):
-			if particle_index != self.num:
+			if particle_index != particle_array[particle_index].num:
 				distance_x, distance_y, distance_z, distance_r = self.calculateDistance(particle_array[particle_index])
 				distance_array_x.append(distance_x)
 				distance_array_y.append(distance_y)
@@ -171,34 +147,108 @@ class Fuse(compound):
 
 class Oligomer(Fuse):
 
-	def giveNum(self,particle_array_length): 
-		self.num = particle_array_length - 2
-
+	def giveProperties(self,particle_array_length): 
+		self.num = particle_array_length - 1
+		self.hasOligomerized = False
+		self.radius = 3
 	def giveMass(self, particle1, particle2):
 		self.mass = particle1.mass + particle2.mass
 	
 	def giveRadius(self, particle1, particle2):
 		self.radius = particle1.radius + particle2.radius
 
+"""" Check for Contacts before Doing Anything Else""" 
+def oligoCheck(particle_array):
+	""" Find out if dimerization should occur """
+	sigma = 2* particle_array[0].radius #optimal distance
+	epsilon = -50 # well depth
+
+	""" Get Distances """
+
+	#print(particle_array)
+	oligomer_pair_list = []
+	for particle1_idx in range(0,len(particle_array)):
+		distance_array_x = []
+		distance_array_y = []
+		distance_array_z = []
+		distance_array_r = []
+		particle_num_array = []
+		for particle2_idx in range(0,len(particle_array)):
+			if particle1_idx != particle2_idx:
+				distance_x, distance_y, distance_z, distance_r = particle_array[particle1_idx].calculateDistance(particle_array[particle2_idx])
+				distance_array_x.append(distance_x)
+				distance_array_y.append(distance_y)
+				distance_array_z.append(distance_z)
+				distance_array_r.append(distance_r)
+				particle_num_array.append(particle_array[particle2_idx].num)
+		#print(distance_array_r)
+		#print(sigma)
+
+		for j in range(0, len(distance_array_r)):
+			if distance_array_r[j] <= sigma: 
+				oligomer_pair_list.append((particle_array[particle1_idx].num,particle_num_array[j]))
+		#print(distance_array_r)
+	# This gets all of the particls that are close enough to oligomerize. Double counting does happen!!! 
+	#print(oligomer_pair_list)
+
+	keep_list = []
+	for pair in  oligomer_pair_list:
+		if (pair[1],pair[0]) not in keep_list:
+			keep_list.append(pair)
+	print(keep_list)
+	print(particle_array)
+
+
+	for pair in keep_list: 
+		#if not particle_array[pair[1]].hasOligomerized:
+		temp1_oligomer = Oligomer([particle_array[pair[0]],particle_array[pair[1]]])
+		temp2_oligomer = Oligomer([particle_array[pair[0]],particle_array[pair[1]]])
+		
+		temp1_oligomer.giveProperties(len(particle_array))
+		temp2_oligomer.giveProperties(len(particle_array))
+
+		particle_array[pair[0]] = temp1_oligomer
+		particle_array[pair[1]] = temp2_oligomer
+		particle_array[pair[0]].hasOligomerized = True
+		#particle_array[pair[1]].hasOligomerized = True 
+
+		#particle_array.append(temp_oligomer)
+		# particle_array[pair[1]].OligoPartner = pair[0]
+
+	keep_list = [particle for particle in particle_array if particle.hasOligomerized == False]
+	for particle in particle_array:
+		if particle.hasOligomerized:
+			particle.visible = False
+			del particle
+
+	#print(keep_list)
+
+	return keep_list
+
+
 """Main Simulation - The Conductor! """
 particle_array = []
-for i in range(0,2):
-	temp_particle = Particle(pos = vector(random.uniform(-1,2),random.uniform(-1,2),random.uniform(-1,3)), radius = 0.8, color = color.white)
+for i in range(0,5):
+	#temp_particle = Particle(pos = vector(i,0,0), radius = 0.8, color = color.white)
+
+	temp_particle = Particle(pos = vector(random.uniform(-1,1),random.uniform(-1,1),random.uniform(-1,1)), radius = 0.8, color = color.white)
 	temp_particle.getContactPoints(theta = 0, phi = 30, theta_offset = 20)
 	contactPoint1 = Particle(pos = vector(temp_particle.x1,temp_particle.y1,temp_particle.z1), radius = 0.1, color = color.green)
 	contactPoint2 = Particle(pos = vector(temp_particle.x2,temp_particle.y2,temp_particle.z2), radius = 0.1, color = color.blue)
 	
 	temp_particle_fusion = Fuse([temp_particle,contactPoint1])
 	temp_particle_fusion = Fuse([temp_particle_fusion, contactPoint2])
-	temp_particle_fusion.giveRadius(temp_particle)
-	temp_particle_fusion.giveNum(i)
-	temp_particle_fusion.giveMass(2)
+	temp_particle_fusion.giveProperties(temp_particle, num =i, mass =2)
+	# temp_particle_fusion.giveNum(i)
+	# temp_particle_fusion.giveMass(2)
 
 	particle_array.append(temp_particle_fusion)
-for __ in range(0,2000):
+for __ in range(0,5000):
 	rate(10) 
+
+	particle_array = oligoCheck(particle_array)
 	for particle in particle_array:
-		print(particle_array)
+		#print(particle_array)
 		particle.update(particle_array)
 		# if particle.hasOligomerized: 
 		# 	particle.hasOligomerized = False
